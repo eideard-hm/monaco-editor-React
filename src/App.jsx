@@ -1,46 +1,50 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import Editor from '@monaco-editor/react'
-import useCreateDesing from './hooks/useCreateDesing';
+import IframePreview from './components/IframePreview';
+import useHandleState from './hooks/useHandleState';
+import { useHotkeys } from 'react-hotkeys-hook';
+import debounce from 'lodash.debounce';
 
 function App() {
-
-  const [valueEditor, setValueEditor] = useState({
-    html: '',
-    css: '',
-    js: ''
-  });
-  const { html, css, js } = valueEditor;
   const refIframePreview = useRef(null);
+  const editorRef = useRef(null);
 
-  const createDesing = (html, css, js) => {
-    return `
-    <html>
-      <head>
-          <style>
-          ${css}
-          </style>
-      </head>
-      <body>
-          ${html}
-          
-          <script>
-           ${js}
-          </script>
-      </body>
-    </html>
-  `
+  function handleEditorDidMount(editor, monaco) {
+    // here is the editor instance
+    // you can store it in `useRef` for further usage
+    editorRef.current = editor;
   }
 
-  useEffect(() => {
-    refIframePreview.current.src = createDesing(html, css, js);
-  }, [html, css, js])
+  function showValue() {
+    return editorRef.current.getValue();
+  }
 
+  const { valueEditor, setValueEditor } = useHandleState(
+    { html: '', css: '', js: '' },
+    refIframePreview
+  );
+  const { html, css, js } = valueEditor;
 
   const handleEditorChange = (value) => {
     setValueEditor({
       ...valueEditor,
       ...value
     })
+  }
+
+
+  const debounceTime = debounce((keyPress) => {
+    if (keyPress === 17) {
+      setValueEditor({
+        ...valueEditor,
+        'js': showValue()
+      })
+    }
+  }, 500)
+
+  const handleKeyDown = (e) => {
+    console.log('SE EJECUTO EL EVENTO');
+    debounceTime(e.keyCode);
   }
 
   return (
@@ -51,15 +55,33 @@ function App() {
           language='html'
           value={html}
           onChange={value => handleEditorChange({ 'html': value })}
-          theme='vs-dark' />
+          theme='vs-dark'
+          className=''
+          options={{
+            minimap: {
+              enabled: false,
+            },
+            fontSize: 18,
+            cursorStyle: "block",
+            // wordWrap: "on",
+          }} />
       </div>
 
-      <div id="js">
+      <div id="js" onKeyDown={handleKeyDown}>
         <Editor
           language='javascript'
           value={js}
-          onChange={value => handleEditorChange({ 'js': value })}
-          theme='vs-dark' />
+          onMount={handleEditorDidMount}
+          // onChange={value => handleEditorChange({ 'js': value })}
+          theme='vs-dark'
+          options={{
+            minimap: {
+              enabled: false,
+            },
+            fontSize: 18,
+            cursorStyle: "block",
+            wordWrap: "on",
+          }} />
       </div>
 
       <div id="css">
@@ -67,11 +89,20 @@ function App() {
           language='css'
           value={css}
           onChange={value => handleEditorChange({ 'css': value })}
-          theme='vs-dark' />
+          theme='vs-dark'
+          className=''
+          options={{
+            minimap: {
+              enabled: false,
+            },
+            fontSize: 18,
+            cursorStyle: "block",
+            wordWrap: "on",
+          }} />
       </div>
 
       <div id="preview">
-        <iframe ref={refIframePreview} title="Preview Editor"></iframe>
+        <IframePreview refIframePreview={refIframePreview} />
       </div>
     </div>
   );
