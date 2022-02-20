@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import Editor from '@monaco-editor/react'
 import IframePreview from './components/IframePreview';
 import useHandleState from './hooks/useHandleState';
-import { useHotkeys } from 'react-hotkeys-hook';
+// import { useHotkeys } from 'react-hotkeys-hook';
 import debounce from 'lodash.debounce';
 
 function App() {
