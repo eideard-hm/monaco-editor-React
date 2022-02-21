@@ -3,9 +3,11 @@ import Editor from '@monaco-editor/react'
 import IframePreview from './components/IframePreview';
 import useHandleState from './hooks/useHandleState';
 import debounce from 'lodash.debounce';
+import { emmetHTML, emmetCSS, emmetJSX } from 'emmet-monaco-es'
 
 const App = () => {
   const refIframePreview = useRef(null);
+  const editorRef = useRef(null);
 
   const { valueEditor, setValueEditor } = useHandleState(
     { html: '', css: '', js: '' },
@@ -27,6 +29,18 @@ const App = () => {
     })
   }, 1000)
 
+  // editor 
+  const handleEditorDidMount = (editor, monaco) => {
+    editorRef.current = editor;
+
+    const dispose = emmetHTML(monaco);
+    const disposeCss = emmetCSS(monaco);
+    const disposeJS = emmetJSX(monaco);
+    dispose();
+    disposeCss();
+    disposeJS();
+  }
+
   return (
     <div className='editor'>
 
@@ -41,7 +55,9 @@ const App = () => {
               enabled: false,
             },
             fontSize: 18,
-            wordWrap: "on"
+            wordWrap: "on",
+            fontFamily: 'Cascadia Code PL',
+            fontLigatures: true
           }} />
       </div>
 
@@ -50,6 +66,7 @@ const App = () => {
           language='javascript'
           value={js}
           onChange={value => debounceTime({ 'js': value })}
+          onMount={handleEditorDidMount}
           theme='vs-dark'
           options={{
             minimap: {
@@ -57,6 +74,8 @@ const App = () => {
             },
             fontSize: 18,
             wordWrap: "on",
+            fontFamily: 'Cascadia Code PL',
+            fontLigatures: true
           }} />
       </div>
 
@@ -72,6 +91,8 @@ const App = () => {
             },
             fontSize: 18,
             wordWrap: "on",
+            fontFamily: 'Cascadia Code PL',
+            fontLigatures: true
           }} />
       </div>
 

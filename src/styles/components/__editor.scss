@@ -7,6 +7,23 @@
     gap: 10px;
 
     overflow: hidden;
+
+    & #html::before {
+        content: '';
+        position: absolute;
+        bottom: 50px;
+        right: 20px;
+    }
+
+    & #html::after{
+        content: '';
+        background-image: url('/assets/img/html.svg');
+        background-repeat: no-repeat;
+        background-size: cover;
+        bottom: 50px;
+        right: 20px;
+        z-index: 1000;
+    }
 }
 
 #preview iframe {
