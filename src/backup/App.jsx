@@ -1,3 +1,8 @@
+/**
+ * Backup con las funcionalidades hasta el momento 
+ */
+
+
 import { useRef } from 'react';
 import Editor from '@monaco-editor/react'
 import IframePreview from './components/IframePreview';
@@ -6,6 +11,31 @@ import debounce from 'lodash.debounce';
 
 const App = () => {
   const refIframePreview = useRef(null);
+  const editorRef = useRef(null);
+
+  const runCode = () => {
+    debounceTime();
+  }
+
+  const handleEditorDidMount = (editor, monaco) => {
+    editorRef.current = editor;
+
+    const blockContext = "editorTextFocus && !suggestWidgetVisible && !renameInputVisible && !inSnippetMode " +
+      "&& !quickFixWidgetVisible";
+
+    editor.addAction({
+      id: "executeCurrentAndAdvance",
+      label: "Execute Block and Advance",
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_B],
+      contextMenuGroupId: "2_execution",
+      precondition: blockContext,
+      run: runCode
+    });
+  }
+
+  const showValue = () => {
+    return editorRef.current.getValue();
+  }
 
   const { valueEditor, setValueEditor } = useHandleState(
     { html: '', css: '', js: '' },
@@ -20,12 +50,15 @@ const App = () => {
     })
   }
 
-  const debounceTime = debounce((value) => {
+  const debounceTime = debounce(() => {
     setValueEditor({
       ...valueEditor,
-      ...value
+      js: showValue()
     })
-  }, 1000)
+
+
+    console.log('Cambiando el valor de js');
+  }, 500)
 
   return (
     <div className='editor'>
@@ -49,7 +82,7 @@ const App = () => {
         <Editor
           language='javascript'
           value={js}
-          onChange={value => debounceTime({ 'js': value })}
+          onMount={handleEditorDidMount}
           theme='vs-dark'
           options={{
             minimap: {
