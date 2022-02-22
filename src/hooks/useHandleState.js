@@ -14,9 +14,9 @@ const useHandleState = (initialState, refIframePreview) => {
         const [html, css, js] = pathname.slice(1).split('%7C');
 
         setValueEditor({
-            'html': decode(html),
-            'css': decode(css),
-            'js': decode(js)
+            'html': html ? decode(html) : '',
+            'css': css ? decode(css) : '',
+            'js': js ? decode(js) : ''
         })
     }, [])
 
