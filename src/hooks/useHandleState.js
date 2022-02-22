@@ -10,7 +10,6 @@ const useHandleState = (initialState, refIframePreview) => {
     useEffect(() => {
         const { pathname } = window.location;
 
-        if (!pathname.slice(1)) return;
         const [htmlRaw, cssRaw, jsRaw] = pathname.slice(1).split('%7C');
 
         setValueEditor({
@@ -23,6 +22,7 @@ const useHandleState = (initialState, refIframePreview) => {
     useEffect(() => {
         changeUrl(html, css, js);
         refIframePreview.current.setAttribute('srcDoc', createDesing(html, css, js));
+        console.log({ html, css, js })
     }, [html, css, js, refIframePreview])
 
     return {
