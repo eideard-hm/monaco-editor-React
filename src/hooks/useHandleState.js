@@ -9,14 +9,13 @@ const useHandleState = (initialState, refIframePreview) => {
 
     useEffect(() => {
         const { pathname } = window.location;
-
-        if (!pathname.slice(1)) return;
+        
         const [html, css, js] = pathname.slice(1).split('%7C');
 
         setValueEditor({
-            'html': html ? decode(html) : '',
-            'css': css ? decode(css) : '',
-            'js': js ? decode(js) : ''
+            'html': (html && html.length !== 0) ? decode(html) : '',
+            'css': (css && css.length !== 0) ? decode(css) : '',
+            'js': (js && js.length !== 0) ? decode(js) : ''
         })
     }, [])
 

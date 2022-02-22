@@ -1,6 +1,7 @@
 {
   "name": "mocano-editor-react",
   "version": "0.1.0",
+  "homepage": "https://code-editor-web.netlify.app/",
   "private": true,
   "dependencies": {
     "@monaco-editor/react": "^4.3.1",
