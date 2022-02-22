@@ -9,19 +9,20 @@ const useHandleState = (initialState, refIframePreview) => {
 
     useEffect(() => {
         const { pathname } = window.location;
-        
-        const [html, css, js] = pathname.slice(1).split('%7C');
+
+        if (!pathname.slice(1)) return;
+        const [htmlRaw, cssRaw, jsRaw] = pathname.slice(1).split('%7C');
 
         setValueEditor({
-            'html': (html && html.length !== 0) ? decode(html) : '',
-            'css': (css && css.length !== 0) ? decode(css) : '',
-            'js': (js && js.length !== 0) ? decode(js) : ''
+            'html': htmlRaw ? decode(htmlRaw) : '',
+            'css': cssRaw ? decode(cssRaw) : '',
+            'js': jsRaw ? decode(jsRaw) : ''
         })
     }, [])
 
     useEffect(() => {
         changeUrl(html, css, js);
-        refIframePreview.current.setAttribute('srcDoc', createDesing(html, css, js))
+        refIframePreview.current.setAttribute('srcDoc', createDesing(html, css, js));
     }, [html, css, js, refIframePreview])
 
     return {
